@@ -1,0 +1,69 @@
+<h2>设计方案总结</h2>
+<p class="subtitle">基于你的选择：单页三卡片 + 暗色渐变风格</p>
+
+<div class="section">
+  <h3>页面整体结构</h3>
+  <div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); border-radius: 12px; padding: 30px; font-family: system-ui; max-width: 500px; margin: 0 auto;">
+    <!-- Header -->
+    <div style="text-align: center; padding-bottom: 20px; border-bottom: 1px solid #ffffff15;">
+      <div style="font-size: 26px; font-weight: 800; color: #e94560; letter-spacing: 2px; text-shadow: 0 2px 20px #e9456040;">异环攻略站</div>
+      <div style="font-size: 12px; color: #8899aa; margin-top: 4px;">Neverness to Everness · 玩家社区</div>
+    </div>
+    <!-- Hero banner -->
+    <div style="margin: 20px 0; padding: 24px; background: linear-gradient(135deg, #e9456020, #f5c51820); border-radius: 10px; border: 1px solid #e9456030; text-align: center;">
+      <div style="font-size: 14px; color: #ddd;">都市超自然开放世界</div>
+      <div style="font-size: 11px; color: #8899aa; margin-top: 6px;">攻略 · 趣闻 · 小知识，一站式掌握</div>
+    </div>
+    <!-- 3 cards -->
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+      <div style="background: linear-gradient(135deg, #e9456015, #e9456005); border: 1px solid #e9456030; border-radius: 10px; padding: 16px;">
+        <div style="font-size: 16px; font-weight: 700; color: #e94560;">⚔️ 攻略</div>
+        <div style="font-size: 11px; color: #8899aa; margin-top: 4px;">Boss打法 · 角色培养 · 副本路线</div>
+      </div>
+      <div style="background: linear-gradient(135deg, #f5c51815, #f5c51805); border: 1px solid #f5c51830; border-radius: 10px; padding: 16px;">
+        <div style="font-size: 16px; font-weight: 700; color: #f5c518;">📰 趣闻</div>
+        <div style="font-size: 11px; color: #8899aa; margin-top: 4px;">剧情彩蛋 · 角色轶事 · 玩家故事</div>
+      </div>
+      <div style="background: linear-gradient(135deg, #53d76915, #53d76905); border: 1px solid #53d76930; border-radius: 10px; padding: 16px;">
+        <div style="font-size: 16px; font-weight: 700; color: #53d769;">💡 小知识</div>
+        <div style="font-size: 11px; color: #8899aa; margin-top: 4px;">隐藏机制 · 效率技巧 · 每日必做</div>
+      </div>
+    </div>
+    <!-- Footer -->
+    <div style="text-align: center; margin-top: 20px; padding-top: 16px; border-top: 1px solid #ffffff10;">
+      <div style="font-size: 10px; color: #556677;">© 2026 异环玩家攻略站 · 内容持续更新</div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>配色方案</h3>
+  <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <div style="width: 24px; height: 24px; border-radius: 4px; background: #1a1a2e;"></div>
+      <span style="font-size: 13px; color: #ccc;">背景 #1a1a2e</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <div style="width: 24px; height: 24px; border-radius: 4px; background: #e94560;"></div>
+      <span style="font-size: 13px; color: #ccc;">主色 #e94560</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <div style="width: 24px; height: 24px; border-radius: 4px; background: #f5c518;"></div>
+      <span style="font-size: 13px; color: #ccc;">辅色 #f5c518</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <div style="width: 24px; height: 24px; border-radius: 4px; background: #53d769;"></div>
+      <span style="font-size: 13px; color: #ccc;">辅色 #53d769</span>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>技术方案</h3>
+  <div style="background: #ffffff08; border-radius: 8px; padding: 16px; font-size: 13px; color: #bbb; line-height: 1.8;">
+    • 纯 HTML + CSS，无框架依赖<br>
+    • 单文件 <code style="background:#ffffff15;padding:2px 6px;border-radius:3px;">index.html</code>（内嵌CSS）<br>
+    • 适配手机和电脑（响应式）<br>
+    • 内容使用占位文本，方便后续替换
+  </div>
+</div>

@@ -1,0 +1,26 @@
+<h2>网站结构怎么设计？</h2>
+<p class="subtitle">你提到了攻略、趣闻、小知识三个板块 — 下面有几种组织方式</p>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>单页滚动 — 三栏卡片</h3>
+      <p>一个页面到底，顶部大标题 + 三个卡片区域（攻略 | 趣闻 | 小知识），每个区域放几条最新内容，点击展开详情</p>
+    </div>
+  </div>
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>单页滚动 — 标签切换</h3>
+      <p>一个页面，顶部三个标签按钮（Tab），点击切换显示不同板块内容，更像 App 的感觉</p>
+    </div>
+  </div>
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>三个独立页面</h3>
+      <p>首页 + 攻略页 + 趣闻页 + 小知识页，顶部导航栏切换。内容多时更清晰，但文件也多一些</p>
+    </div>
+  </div>
+</div>

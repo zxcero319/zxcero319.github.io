@@ -1,0 +1,70 @@
+<h2>更新后的设计 — 加入语言切换</h2>
+<p class="subtitle">右上角新增语言选择器，支持四种语言</p>
+
+<div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); border-radius: 12px; padding: 30px 24px; font-family: system-ui; max-width: 520px; margin: 0 auto;">
+  <!-- Header row with language switcher -->
+  <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 16px; border-bottom: 1px solid #ffffff15;">
+    <div style="font-size: 22px; font-weight: 800; color: #e94560; letter-spacing: 2px; text-shadow: 0 2px 20px #e9456040;">异环攻略站</div>
+    <!-- Language dropdown -->
+    <div style="position: relative;">
+      <div style="display: flex; align-items: center; gap: 6px; background: #ffffff10; border: 1px solid #ffffff20; border-radius: 6px; padding: 6px 12px; cursor: pointer;">
+        <span style="font-size: 14px;">🌐</span>
+        <span style="font-size: 12px; color: #ccc;">中文</span>
+        <span style="font-size: 10px; color: #8899aa;">▼</span>
+      </div>
+      <!-- Dropdown menu (design only) -->
+      <div style="position: absolute; top: 100%; right: 0; margin-top: 4px; background: #1e2a3a; border: 1px solid #ffffff20; border-radius: 6px; overflow: hidden; min-width: 100px;">
+        <div style="padding: 8px 14px; font-size: 12px; color: #e94560; background: #e9456015;">🇨🇳 中文</div>
+        <div style="padding: 8px 14px; font-size: 12px; color: #ccc;">🇺🇸 English</div>
+        <div style="padding: 8px 14px; font-size: 12px; color: #ccc;">🇯🇵 日本語</div>
+        <div style="padding: 8px 14px; font-size: 12px; color: #ccc;">🇰🇷 한국어</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hero stays the same -->
+  <div style="margin: 18px 0; padding: 22px; background: linear-gradient(135deg, #e9456020, #f5c51820); border-radius: 10px; border: 1px solid #e9456030; text-align: center;">
+    <div style="font-size: 14px; color: #ddd;">都市超自然开放世界</div>
+    <div style="font-size: 11px; color: #8899aa; margin-top: 4px;">攻略 · 趣闻 · 小知识，一站式掌握</div>
+  </div>
+
+  <!-- 3 cards unchanged -->
+  <div style="display: flex; flex-direction: column; gap: 10px;">
+    <div style="background: linear-gradient(135deg, #e9456015, #e9456005); border: 1px solid #e9456030; border-radius: 10px; padding: 14px;">
+      <div style="font-size: 15px; font-weight: 700; color: #e94560;">⚔️ 攻略</div>
+      <div style="font-size: 11px; color: #8899aa; margin-top: 4px;">Boss打法 · 角色培养 · 副本路线</div>
+    </div>
+    <div style="background: linear-gradient(135deg, #f5c51815, #f5c51805); border: 1px solid #f5c51830; border-radius: 10px; padding: 14px;">
+      <div style="font-size: 15px; font-weight: 700; color: #f5c518;">📰 趣闻</div>
+      <div style="font-size: 11px; color: #8899aa; margin-top: 4px;">剧情彩蛋 · 角色轶事 · 玩家故事</div>
+    </div>
+    <div style="background: linear-gradient(135deg, #53d76915, #53d76905); border: 1px solid #53d76930; border-radius: 10px; padding: 14px;">
+      <div style="font-size: 15px; font-weight: 700; color: #53d769;">💡 小知识</div>
+      <div style="font-size: 11px; color: #8899aa; margin-top: 4px;">隐藏机制 · 效率技巧 · 每日必做</div>
+    </div>
+  </div>
+
+  <div style="text-align: center; margin-top: 16px; padding-top: 14px; border-top: 1px solid #ffffff10;">
+    <div style="font-size: 10px; color: #556677;">© 2026 异环玩家攻略站</div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>语言切换实现方案</h3>
+  <div class="options">
+    <div class="option" data-choice="js" onclick="toggleSelect(this)">
+      <div class="letter">A</div>
+      <div class="content">
+        <h3>JS 翻译表（推荐）</h3>
+        <p>所有语言的文本存在 JS 对象里，切换语言时动态替换页面文字。单文件搞定，不用额外依赖</p>
+      </div>
+    </div>
+    <div class="option" data-choice="google" onclick="toggleSelect(this)">
+      <div class="letter">B</div>
+      <div class="content">
+        <h3>Google 翻译挂件</h3>
+        <p>嵌入 Google Translate 小工具，自动翻译页面。最简单但翻译质量不可控，且国内用户可能加载不了</p>
+      </div>
+    </div>
+  </div>
+</div>
