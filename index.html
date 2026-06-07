@@ -385,31 +385,45 @@
     list-style: none;
   }
   .card-list li {
-    padding: 10px 14px;
+    padding: 0;
     margin-bottom: 6px;
     background: rgba(255,255,255,0.03);
     border-radius: 8px;
     font-size: 0.9rem;
     color: #bbb;
     transition: background 0.15s;
-    cursor: default;
+    display: flex;
+    align-items: center;
+    gap: 0;
   }
   .card-list li:hover {
     background: rgba(255,255,255,0.06);
   }
   .card-list a {
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: 10px;
     padding: 10px 14px;
-    margin: -10px -14px;
-    border-radius: 8px;
     color: inherit;
     text-decoration: none;
     transition: color 0.15s;
+    flex: 1;
+    border-radius: 8px;
   }
   .card-list a:hover { color: #fff; }
-  .card.guides .card-list li::before { content: "▸ "; color: #e94560; }
-  .card.news .card-list li::before { content: "▸ "; color: #f5c518; }
-  .card.tips .card-list li::before { content: "▸ "; color: #53d769; }
+  .card-list .li-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    background-size: cover;
+    background-position: center;
+    border: 2px solid rgba(255,255,255,0.12);
+  }
 
   /* ===== Footer ===== */
   .footer {
@@ -515,11 +529,11 @@
       </div>
       <p class="card-desc" data-i18n="guidesDesc">Boss 打法、角色培养、副本路线一站式指南</p>
       <ul class="card-list">
-        <li><a href="article.html?id=guides1" data-i18n="guides1">安魂曲抽取指南</a></li>
-        <li><a href="article.html?id=guides2" data-i18n="guides2">深渊11站配队实测</a></li>
-        <li><a href="article.html?id=guides3" data-i18n="guides3">娜娜莉隐藏机制解析</a></li>
-        <li><a href="article.html?id=guides4" data-i18n="guides4">免费S级弧盘全收集</a></li>
-        <li><a href="article.html?id=guides5" data-i18n="guides5">新角色伊洛伊前瞻</a></li>
+        <li><a href="article.html?id=guides1" data-i18n="guides1"><span class="li-icon" style="background: linear-gradient(135deg, #7b2d8b, #c44dff);">🔮</span>安魂曲抽取指南</a></li>
+        <li><a href="article.html?id=guides2" data-i18n="guides2"><span class="li-icon" style="background: linear-gradient(135deg, #d4421a, #f5a623);">⚔️</span>深渊11站配队实测</a></li>
+        <li><a href="article.html?id=guides3" data-i18n="guides3"><span class="li-icon" style="background: linear-gradient(135deg, #1a6dba, #5cc8ff);">❄️</span>娜娜莉隐藏机制解析</a></li>
+        <li><a href="article.html?id=guides4" data-i18n="guides4"><span class="li-icon" style="background: linear-gradient(135deg, #c7880a, #ffd700);">⭐</span>免费S级弧盘全收集</a></li>
+        <li><a href="article.html?id=guides5" data-i18n="guides5"><span class="li-icon" style="background: linear-gradient(135deg, #2d8b4e, #5ce68c);">🌿</span>新角色伊洛伊前瞻</a></li>
       </ul>
     </div>
 
@@ -531,11 +545,11 @@
       </div>
       <p class="card-desc" data-i18n="newsDesc">剧情彩蛋、角色轶事与玩家社区精彩内容</p>
       <ul class="card-list">
-        <li><a href="article.html?id=news1" data-i18n="news1">看板娘薄荷人设解析</a></li>
-        <li><a href="article.html?id=news2" data-i18n="news2">羁绊头像恶搞大全</a></li>
-        <li><a href="article.html?id=news3" data-i18n="news3">宠物沟通师诈骗事件</a></li>
-        <li><a href="article.html?id=news4" data-i18n="news4">黑羽魔女小秘密</a></li>
-        <li><a href="article.html?id=news5" data-i18n="news5">游戏彩蛋全盘点</a></li>
+        <li><a href="article.html?id=news1" data-i18n="news1"><span class="li-icon" style="background: linear-gradient(135deg, #3cb371, #7fffd4);">🌿</span>看板娘薄荷人设解析</a></li>
+        <li><a href="article.html?id=news2" data-i18n="news2"><span class="li-icon" style="background: linear-gradient(135deg, #e91e63, #ff80ab);">😂</span>羁绊头像恶搞大全</a></li>
+        <li><a href="article.html?id=news3" data-i18n="news3"><span class="li-icon" style="background: linear-gradient(135deg, #00897b, #4db6ac);">🐱</span>宠物沟通师诈骗事件</a></li>
+        <li><a href="article.html?id=news4" data-i18n="news4"><span class="li-icon" style="background: linear-gradient(135deg, #3c1642, #7b4f8a);">🖤</span>黑羽魔女小秘密</a></li>
+        <li><a href="article.html?id=news5" data-i18n="news5"><span class="li-icon" style="background: linear-gradient(135deg, #ff6f00, #ffca28);">🥚</span>游戏彩蛋全盘点</a></li>
       </ul>
     </div>
 
@@ -547,11 +561,11 @@
       </div>
       <p class="card-desc" data-i18n="tipsDesc">隐藏机制、效率技巧、每日必做小贴士</p>
       <ul class="card-list">
-        <li><a href="article.html?id=tips1" data-i18n="tips1">零成本销星技巧</a></li>
-        <li><a href="article.html?id=tips2" data-i18n="tips2">每日必做清单</a></li>
-        <li><a href="article.html?id=tips3" data-i18n="tips3">安魂曲无限刷材料</a></li>
-        <li><a href="article.html?id=tips4" data-i18n="tips4">快速赚钱指南</a></li>
-        <li><a href="article.html?id=tips5" data-i18n="tips5">抽卡资源规划</a></li>
+        <li><a href="article.html?id=tips1" data-i18n="tips1"><span class="li-icon" style="background: linear-gradient(135deg, #1565c0, #64b5f6);">💫</span>零成本销星技巧</a></li>
+        <li><a href="article.html?id=tips2" data-i18n="tips2"><span class="li-icon" style="background: linear-gradient(135deg, #2e7d32, #66bb6a);">✅</span>每日必做清单</a></li>
+        <li><a href="article.html?id=tips3" data-i18n="tips3"><span class="li-icon" style="background: linear-gradient(135deg, #4a148c, #ab47bc);">♾️</span>安魂曲无限刷材料</a></li>
+        <li><a href="article.html?id=tips4" data-i18n="tips4"><span class="li-icon" style="background: linear-gradient(135deg, #e65100, #ffa726);">💰</span>快速赚钱指南</a></li>
+        <li><a href="article.html?id=tips5" data-i18n="tips5"><span class="li-icon" style="background: linear-gradient(135deg, #b71c1c, #ef5350);">🎫</span>抽卡资源规划</a></li>
       </ul>
     </div>
   </section>
