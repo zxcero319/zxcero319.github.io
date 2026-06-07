@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title data-i18n="pageTitle">异环攻略站</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: #1a1a2e;
+    color: #ddd;
+    min-height: 100vh;
+    line-height: 1.8;
+    overflow-x: hidden;
+  }
+
+  /* ===== Header ===== */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(26,26,46,0.85);
+  }
+  .header-left { display: flex; align-items: center; gap: 16px; }
+  .back-btn {
+    color: #8899aa;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .back-btn:hover { color: #e94560; }
+  .logo {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #e94560;
+    letter-spacing: 2px;
+    text-shadow: 0 2px 20px rgba(233,69,96,0.4);
+  }
+
+  /* ===== Language Switcher ===== */
+  .lang-switcher { position: relative; user-select: none; }
+  .lang-btn {
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 8px; padding: 7px 14px; cursor: pointer;
+    font-size: 0.85rem; color: #ccc; transition: all 0.2s;
+  }
+  .lang-btn:hover { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.25); }
+  .lang-btn .arrow { font-size: 0.6rem; transition: transform 0.2s; color: #8899aa; }
+  .lang-switcher.open .lang-btn .arrow { transform: rotate(180deg); }
+  .lang-dropdown {
+    position: absolute; top: calc(100% + 4px); right: 0;
+    background: #1e2a3a; border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 8px; overflow: hidden; min-width: 145px;
+    opacity: 0; pointer-events: none; transform: translateY(-4px);
+    transition: all 0.2s; box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+  .lang-switcher.open .lang-dropdown { opacity: 1; pointer-events: auto; transform: translateY(0); }
+  .lang-option {
+    padding: 10px 16px; font-size: 0.85rem; color: #ccc; cursor: pointer;
+    transition: background 0.15s; display: flex; align-items: center; gap: 8px;
+  }
+  .lang-option:hover { background: rgba(255,255,255,0.06); }
+  .lang-option.active { color: #e94560; background: rgba(233,69,96,0.1); font-weight: 600; }
+
+  /* ===== Article ===== */
+  .wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 20px 60px;
+  }
+  .article-meta {
+    font-size: 0.8rem;
+    color: #8899aa;
+    margin-bottom: 8px;
+  }
+  .article-category {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    margin-bottom: 16px;
+  }
+  .cat-guides { background: rgba(233,69,96,0.15); color: #e94560; border: 1px solid rgba(233,69,96,0.25); }
+  .cat-news { background: rgba(245,197,24,0.15); color: #f5c518; border: 1px solid rgba(245,197,24,0.25); }
+  .cat-tips { background: rgba(83,215,105,0.15); color: #53d769; border: 1px solid rgba(83,215,105,0.25); }
+  .article-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 24px;
+    line-height: 1.3;
+  }
+  .article-body h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #e94560;
+    margin: 28px 0 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .article-body h3 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #eee;
+    margin: 20px 0 8px;
+  }
+  .article-body p {
+    margin-bottom: 14px;
+    color: #bbb;
+    font-size: 0.95rem;
+  }
+  .article-body ul, .article-body ol {
+    margin: 8px 0 16px 20px;
+    color: #bbb;
+    font-size: 0.95rem;
+  }
+  .article-body li { margin-bottom: 6px; }
+  .article-body .highlight {
+    background: rgba(233,69,96,0.1);
+    border-left: 3px solid #e94560;
+    padding: 12px 16px;
+    border-radius: 0 8px 8px 0;
+    margin: 16px 0;
+    color: #ddd;
+    font-size: 0.9rem;
+  }
+  .article-body table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 0.9rem;
+  }
+  .article-body th {
+    text-align: left;
+    padding: 10px 14px;
+    background: rgba(255,255,255,0.05);
+    color: #ddd;
+    font-weight: 600;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  .article-body td {
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    color: #bbb;
+  }
+  .not-found {
+    text-align: center;
+    padding: 80px 20px;
+  }
+  .not-found h2 { font-size: 2rem; color: #e94560; margin-bottom: 8px; }
+  .not-found p { color: #8899aa; }
+
+  /* ===== Footer ===== */
+  .footer {
+    text-align: center;
+    padding: 24px 20px 32px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    font-size: 0.78rem;
+    color: #556677;
+  }
+
+  @media (max-width: 600px) {
+    .header { padding: 12px 16px; }
+    .logo { font-size: 1rem; }
+    .article-title { font-size: 1.35rem; }
+    .wrapper { padding: 24px 16px 40px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-left">
+    <a href="index.html" class="back-btn" data-i18n="back">← 返回首页</a>
+    <div class="logo" data-i18n="siteName">异环攻略站</div>
+  </div>
+  <div class="lang-switcher" id="langSwitcher">
+    <div class="lang-btn" id="langBtn">
+      <span>🌐</span>
+      <span id="currentLang">简体中文</span>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="lang-dropdown">
+      <div class="lang-option active" data-lang="zh-CN">🇨🇳 简体中文</div>
+      <div class="lang-option" data-lang="zh-TW">🇹🇼 繁體中文</div>
+      <div class="lang-option" data-lang="en">🇺🇸 English</div>
+      <div class="lang-option" data-lang="ja">🇯🇵 日本語</div>
+      <div class="lang-option" data-lang="ko">🇰🇷 한국어</div>
+    </div>
+  </div>
+</header>
+
+<main class="wrapper" id="articleContent">
+  <!-- Filled by JS -->
+</main>
+
+<footer class="footer">
+  <p>© 2026 <span data-i18n="siteName">异环攻略站</span></p>
+</footer>
+
+<script>
+// ===== i18n (shared keys + article content) =====
+const i18n = {
+  "zh-CN": {
+    siteName: "异环攻略站",
+    back: "← 返回首页",
+    langName: "简体中文",
+    notFoundTitle: "文章未找到",
+    notFoundDesc: "请从首页选择一篇文章阅读",
+    catGuides: "攻略",
+    catNews: "趣闻",
+    catTips: "小知识",
+    pageTitle: "异环攻略站",
+    // === Articles ===
+    guides1: {
+      title: "安魂曲抽取指南：强度分析、弧盘搭配与四套时装获取",
+      category: "catGuides",
+      body: `<p>安魂曲（Anima）是1.1版本「游梦洄廊」限定棋盘「久梦初醒时」的S级暗属性输出角色，卡池开放时间为5月28日～6月18日。</p>
+<h2>角色定位与强度</h2>
+<p>安魂曲是目前版本最强的暗属性主C，拥有独立的抗性乘区，在深渊高层表现极为出色。搭配早雾（1觉）和达芙蒂尔（0觉）的创生队，12层上半可33秒通关。</p>
+<div class="highlight">核心机制：噩梦效果复制——安魂曲可以将一个敌人的负面效果复制到周围所有目标，在面对多波次精英怪时输出爆炸。</div>
+<h2>抽取建议</h2>
+<ul><li><strong>强度党</strong>：至少抽到1觉，质变点在1觉和6觉</li><li><strong>休闲党</strong>：0觉即可体验核心玩法，弧盘优先级高于觉醒</li><li><strong>零氪党</strong>：可借助好友的安魂曲体验，环石留给后续角色</li></ul>
+<h2>弧盘搭配</h2>
+<p>专属弧盘「最后一朵玫瑰」需通过「夜曲特刊」研募活动获取。备选弧盘：「休假日」（免费S级，+30%攻击，通过隐藏任务「日蚀」获取）。</p>
+<h2>四套时装</h2>
+<ul><li><strong>新月摇篮曲</strong>：羁遇10级免费获取</li><li><strong>鎏金交响诗</strong>：棋盘抽取获取</li><li><strong>旧忆挽歌</strong>：商城购买（7月2日前折扣）</li><li><strong>黑白童谣</strong>：商城购买（7月2日前折扣）</li></ul>
+<h2>配队推荐</h2>
+<p>最优配队：安魂曲 + 早雾(1觉) + 达芙蒂尔 + 哈尼娅。输出循环：早雾挂debuff → 达芙蒂尔减抗 → 安魂曲进场爆发。</p>`
+    },
+    guides2: {
+      title: "深渊11站配队实测：低命通关阵容推荐",
+      category: "catGuides",
+      body: `<p>深渊11站（轨外之境）是当前版本的高难副本。实测证明，没有安魂曲也能满星通关。</p>
+<h2>推荐配队一：浔主C队</h2>
+<p>核心：浔(1命) + 白藏 + 小吱。单轮爆发极高，适合高血量精英关卡。浔1命后的追击伤害是核心输出点。</p>
+<h2>推荐配队二：娜娜莉速切队</h2>
+<p>核心：娜娜莉(0命可用) + 小吱 + 白藏。高频换人、容错率高，适合多目标关卡。利用娜娜莉E切人不掉buff的机制可大幅提升输出。</p>
+<h2>推荐配队三：白藏单通</h2>
+<p>白藏(1命)操作上限极高，熟练后可以单通大部分高难关卡。核心是利用闪避取消后摇，保持全程无敌帧覆盖率。</p>
+<h2>通用技巧</h2>
+<ul><li>优先击杀召唤小怪的精英敌人</li><li>善用场地机关，部分关卡有爆炸桶可用</li><li>11层BOSS「湮灭之影」的扇形AOE可通过贴身站位躲避</li></ul>`
+    },
+    guides3: {
+      title: "娜娜莉隐藏机制解析：E切人锁buff、无前摇重击手法",
+      category: "catGuides",
+      body: `<p>娜娜莉是当前版本操作上限最高的角色之一，掌握隐藏机制后输出可提升30%以上。</p>
+<h2>机制一：E技能切人不掉buff</h2>
+<p>娜娜莉使用E技能后的瞬间切人，可以保留「权柄」buff在后台继续触发被动伤害。操作要点：E → 立即切人（窗口约0.3秒）。</p>
+<h2>机制二：3A/4A合轴切人</h2>
+<p>在第3段或第4段普攻时预输入平A指令后立即切人，娜娜莉会留在场上自动打完整套连段，同时你可以操作另一个角色。这是「双人同场」的核心技巧。</p>
+<h2>机制三：大招期间切人锁buff</h2>
+<p>大招动画期间切人放Q，可以锁定当前所有buff，让大招覆盖2套完整平A（比纯站场多3段伤害）。</p>
+<h2>机制四：无前摇重击</h2>
+<p>在普攻第1/2/3/5段后可以直接接无前摇重击，跳过重击蓄力动画。推荐在第3段后使用，收益最高。</p>
+<div class="highlight">实战连段：E → 3A → 无前摇重击 → 4A → 切人 → 大招锁buff。这套连段可在6秒内打出全角色最高爆发。</div>`
+    },
+    guides4: {
+      title: "免费S级弧盘全收集：14个白嫖弧盘获取路线",
+      category: "catGuides",
+      body: `<p>游戏中共有14个可免费获取的S级弧盘，无需抽取即可获得。以下是完整获取指南。</p>
+<h2>必拿弧盘（Top 5）</h2>
+<table><tr><th>弧盘</th><th>获取方式</th><th>适配角色</th></tr>
+<tr><td>休假日</td><td>隐藏任务「日蚀」×6次对话</td><td>主角（+30%攻击）</td></tr>
+<tr><td>银河暂留</td><td>累计登录10天</td><td>海月</td></tr>
+<tr><td>思考喵</td><td>都市大亨21级</td><td>小吱</td></tr>
+<tr><td>焰魂狂飙</td><td>异象委托「铁驭强袭」</td><td>哈索尔</td></tr>
+<tr><td>好狗狗走四方</td><td>周本墨菲克斯掉落</td><td>早雾</td></tr></table>
+<h2>其他弧盘</h2>
+<ul><li><strong>茶花会</strong>：世界BOSS塞润尼缇掉落，适配白藏</li><li><strong>海特洛的安宁</strong>：4星通缉击败BOSS，主角备用</li><li><strong>千金难买你开心</strong>：纳库佩达之池投100枚金币</li><li><strong>孤高的指挥者</strong>：完成全部异闻录收集</li></ul>
+<h2>获取路线建议</h2>
+<p>优先拿「休假日」（30%攻击加成泛用性最高），其次按自己主力角色对应的弧盘去拿。所有弧盘建议在冒险等级40级后再去刷，掉率更高。</p>`
+    },
+    guides5: {
+      title: "1.1版本新角色伊洛伊前瞻：首位灵系奶辅",
+      category: "catGuides",
+      body: `<p>伊洛伊（Iloy）是官方最新官宣的S级灵系角色，定位为远程奶辅，预计在后续版本实装。</p>
+<h2>角色定位</h2>
+<p>首位灵系（Spirit）角色，远程辅助型。可召唤异象宠物协同作战，同时提供治疗和增益buff。建模风格类似初音未来，双马尾+科技感服饰。</p>
+<h2>技能解析</h2>
+<ul><li><strong>普攻</strong>：远程音符攻击，命中为全队回复微量生命</li><li><strong>E技能</strong>：召唤异象宠物「旋律」，宠物在场时全队增伤15%</li><li><strong>Q大招</strong>：大范围治疗 + 清除全队debuff + 10秒内全队增伤25%</li></ul>
+<h2>抽取建议（预测）</h2>
+<p>如果是奶辅定位，0觉即具备完整辅助功能，性价比极高。对于没有达芙蒂尔的玩家，伊洛伊可能是更优的辅助选择。</p>
+<div class="highlight">注意：以上信息基于官方爆料和测试服数据，正式上线时可能有调整。</div>`
+    },
+    news1: {
+      title: "看板娘薄荷人设解析：永远挂科的猫娘",
+      category: "catNews",
+      body: `<p>薄荷（Mint）是《异环》的看板娘，一只蓝猫娘。外表甜软、战力不俗、灵魂有趣——但她的管理局考试永远挂科。</p>
+<h2>外形设计</h2>
+<p>微胖、肉嘟嘟的蓝猫娘，猫耳内有白色绒毛，可爱感拉满。尾巴会随着情绪摆动，是玩家最爱互动的细节之一。</p>
+<h2>性格特点</h2>
+<p>元气满满、坐不住，每次出场都带来笑料。她虽然理论考试一直挂科，但外勤能力其实超强——是个实战派。</p>
+<h2>经典习惯</h2>
+<p>薄荷用气味称呼人——叫主角「可可」，因为主角身上有可可的味道。对其他角色也有专属的气味昵称。</p>
+<h2>羁绊头像梗</h2>
+<p>羁绊8级解锁的头像叫「厚荷」，简介「可以不用补考吗？」——官方自己都玩她挂科的梗。</p>
+<h2>玩家评价</h2>
+<p>薄荷在玩家社区人气极高，被评价为「完美谐星」——可爱、能打、还搞笑。她的个人剧情任务也是B站播放量最高的角色PV之一。</p>`
+    },
+    news2: {
+      title: "角色羁绊头像恶搞大全：官方玩梗停不下来",
+      category: "catNews",
+      body: `<p>羁绊系统在等级8时会赠送一个「神奇」头像，每个头像的名字都是对自家角色的恶搞。以下是完整盘点：</p>
+<table><tr><th>角色</th><th>头像名</th><th>梗解析</th></tr>
+<tr><td>薄荷</td><td>厚荷</td><td>谐音，简介「可以不用补考吗？」</td></tr>
+<tr><td>翳（狼哥）</td><td>—</td><td>恶搞名字本身难认（翳=yì）</td></tr>
+<tr><td>法帝娅</td><td>法高娅</td><td>谐音梗，对应双重人格设定</td></tr>
+<tr><td>阿德勒</td><td>啊啊啊</td><td>因为怎么称呼都行</td></tr>
+<tr><td>娜娜莉</td><td>这这莉</td><td>简介「最有方向感一集」</td></tr>
+<tr><td>早雾</td><td>晚雾</td><td>直接反义</td></tr>
+<tr><td>埃德嘉</td><td>埃德减</td><td>小孩子+天才头脑的反差</td></tr>
+<tr><td>达芙蒂尔</td><td>达芙第一</td><td>谐音梗</td></tr>
+<tr><td>白藏</td><td>黑藏</td><td>颜色反转</td></tr>
+<tr><td>小吱</td><td>百日</td><td>对应百日红（紫薇花），寓意富贵吉祥</td></tr></table>
+<p>这个系统被玩家一致好评，展现了开发组对自家角色的热爱和幽默感。</p>`
+    },
+    news3: {
+      title: "支线故事：宠物沟通师诈骗事件",
+      category: "catNews",
+      body: `<p>这是玩家评价最高的支线任务之一，剧情质量被一致认为「比主线还精彩」。</p>
+<h2>故事概要</h2>
+<p>九度C咖啡店的美女店员格蕾丝因思念已故宠物「菲利」，被一位自称能和宠物灵魂沟通的「异能者」盯上。骗子用花言巧语和假证据骗取格蕾丝的信任，最终以「通灵仪式」为名，骗走了她珍藏的稀有限定模型。</p>
+<h2>主角的介入</h2>
+<p>主角通过调查发现「通灵盒子」只是一个普通的音乐盒改造品，所谓的「菲利的声音」其实是录音。最终在一场追逐戏中抓住了骗子。</p>
+<h2>任务亮点</h2>
+<ul><li>剧本扎实，悬疑感十足，转折合理</li><li>都市背景下的「真实感」——利用人对宠物的感情行骗</li><li>任务奖励为一个特殊家具「菲利的项圈」，可放在家中</li></ul>
+<div class="highlight">玩家评价：「没想到在一个手游支线里看到了本格派推理的质感。」</div>`
+    },
+    news4: {
+      title: "黑羽魔女的小秘密：用水晶球偷看动画片",
+      category: "catNews",
+      body: `<p>黑羽魔女是游戏中的人气NPC，她有一个让玩家们集体破防的可爱小秘密。</p>
+<h2>发现过程</h2>
+<p>有玩家在探索时偶然闯入黑羽魔女的家，发现她正用占卜水晶球偷偷看动画片——而且是哈尼娅爱看的特工题材动画。被玩家靠近时，她会慌张地收起水晶球、脸红、整理头发和翅膀，假装什么都没发生。</p>
+<h2>背后的故事</h2>
+<p>黑羽魔女平时在维特海默塔附近摆摊为玩家「卜运」，一副高冷神秘的形象。但私下里她是个宅女，最爱看动画和吃零食。这个反差萌设定让她成为玩家社区中最受欢迎的角色之一。</p>
+<h2>如何触发</h2>
+<p>在夜晚时段（游戏内时间20:00-6:00）前往黑羽的家（桥间地区域），不要敲门直接进入即可触发。每周只能触发一次。</p>`
+    },
+    news5: {
+      title: "游戏彩蛋全盘点：你能认出几个致敬？",
+      category: "catNews",
+      body: `<p>《异环》中埋藏了大量对经典作品的致敬。以下是已发现的所有彩蛋：</p>
+<h2>文学与影视</h2>
+<ul><li><strong>「裴廓德」+ 白鲸</strong>：致敬美国文学名著《白鲸》（Moby Dick）</li><li><strong>手表秒针通讯</strong>：致敬科幻电影《星际穿越》</li><li><strong>「生存还是毁灭」</strong>：莎士比亚《哈姆雷特》</li><li><strong>斯卡布罗集市</strong>：英国传统民歌</li><li><strong>一段特定歌词</strong>：杨宗纬《洋葱》（2008）</li></ul>
+<h2>游戏与动漫</h2>
+<ul><li><strong>撬棍 + 博士</strong>：致敬经典游戏《半条命》</li><li><strong>夜雀食堂 + 算术教室</strong>：东方同人游戏 + 琪露诺梗</li><li><strong>潜水用品 +「碧蓝之家」酒吧</strong>：致敬搞笑番《碧蓝之海》</li></ul>
+<h2>生活与流行文化</h2>
+<ul><li><strong>「随时随地，脉动回来」</strong>：脉动饮料广告词</li><li><strong>巨嘴包子店 NPC 惠兰</strong>：可能致敬《武林外传》李大嘴的初恋「蕙兰」</li></ul>
+<div class="highlight">据说还有更多彩蛋未被发现。如果你找到了新的致敬，欢迎在社区分享！</div>`
+    },
+    tips1: {
+      title: "零成本销星技巧：联机/试用关卡秒消通缉",
+      category: "catTips",
+      body: `<p>在《异环》中犯罪会积累通缉星级（最高5星），招惹来警察追捕。以下是两个零成本消除通缉星的技巧。</p>
+<h2>方法一：召唤好友</h2>
+<p>召唤好友进入你的世界，犯罪星级会直接清零。而且联机状态下无法犯罪，所以不用担心好友捣乱。</p>
+<h2>方法二：进入试用关卡</h2>
+<p>进入任意角色的试用关卡，再退出，犯罪星级同样清零。这个方法不需要好友在线，最为方便。</p>
+<h2>方法三：躲进安全屋</h2>
+<p>购买任意房产后，进入家中等待约30秒，通缉自动解除。这是最「沉浸式」的方法。</p>
+<div class="highlight">最高效的方法：设置菜单 → 角色试用 → 进入后立即退出，全程不到5秒。</div>`
+    },
+    tips2: {
+      title: "每日必做清单：卜运·祈福·许愿·隐藏交互",
+      category: "catTips",
+      body: `<p>每天只需10-15分钟，做完以下事项可最大化日常收益：</p>
+<h2>每日清单（按优先级排列）</h2>
+<ol><li><strong>魔女之家卜运</strong>：桥间地维特海默塔附近找「黑羽」，获得战斗增益和喻石</li><li><strong>愿木坡祈福</strong>：新赫兰德区找「芷兰」买祈福牌，随机增加角色羁绊值</li><li><strong>纳库佩达之池许愿</strong>：绘空町喷泉池投金币，100枚可换S级弧盘</li><li><strong>隐藏交互×3</strong>：地图中点击发光物体或隐藏NPC，获得甲硬币和弧盘碎片</li><li><strong>异能联动×1</strong>：触发一次联动技能，获得驱动块碎片</li><li><strong>探索指南活跃任务</strong>：完成阶段任务，获得方斯、环石、经验</li></ol>
+<h2>优先级建议</h2>
+<p>时间不够的话，至少做完前三项——卜运、祈福、许愿，这三项收益最高且不可累积。</p>`
+    },
+    tips3: {
+      title: "安魂曲无限刷突破材料：远离刷新法详解",
+      category: "catTips",
+      body: `<p>安魂曲的突破材料需要击败特定的野生小怪获取。以下是无限刷取的方法：</p>
+<h2>操作步骤</h2>
+<ol><li>前往材料怪物的刷新点位（建议查看社区跟跑视频确认具体位置）</li><li>击败怪物后<strong>立刻快速远离现场</strong></li><li>持续远离直到屏幕出现「黑潮涌动」画面</li><li>返回刷新点，怪物已经重新出现</li><li>重复以上步骤，无限刷取</li></ol>
+<h2>为什么这是安全的</h2>
+<p>这个操作利用的是游戏的黑潮刷新机制而非漏洞。当玩家离开怪物刷新范围一定距离后，系统会自动重置该区域的怪物——这是一个设计上的便利机制。</p>
+<div class="highlight">注意：不要在怪物死亡动画结束前远离，否则可能不触发刷新。建议在击杀后立即按冲刺键远离。</div>
+<h2>效率建议</h2>
+<p>推荐使用移动速度较快的角色（如娜娜莉），配合冲刺使用，可将单次循环控制在30秒内。</p>`
+    },
+    tips4: {
+      title: "快速赚钱指南：全地图保险箱位置汇总",
+      category: "catTips",
+      body: `<p>方斯（游戏货币）在中期开始紧缺。以下是全地图高收益保险箱位置：</p>
+<h2>高收益保险箱</h2>
+<table><tr><th>地点</th><th>收益</th><th>备注</th></tr>
+<tr><td>米格尔区索雷伊路工地电梯2楼</td><td>5万+方斯</td><td>需击败看守敌人</td></tr>
+<tr><td>米格尔区索雷伊路工地电梯3楼</td><td>5万+方斯</td><td>2楼拿完后上3楼</td></tr>
+<tr><td>火车站仓库</td><td>3万+方斯</td><td>夜间守卫较少</td></tr>
+<tr><td>绘空町巷子</td><td>2.5万方斯</td><td>靠近喷泉池</td></tr>
+<tr><td>迈达斯弧盘工房二楼</td><td>2万方斯</td><td>需要先完成支线任务</td></tr></table>
+<h2>其他赚钱方式</h2>
+<ul><li><strong>开网约车（UBER）</strong>：每次500-2000方斯，稳定但慢</li><li><strong>倒卖古董</strong>：伊波恩古董店低买高卖，需要眼光</li><li><strong>都市大亨经营</strong>：长期投资，21级后回报可观</li></ul>`
+    },
+    tips5: {
+      title: "抽卡资源规划：环石别抽常驻池！",
+      category: "catTips",
+      body: `<p>环石（Orbit）是最珍贵的抽卡资源，错误的用法会让你损失惨重。</p>
+<h2>黄金规则</h2>
+<div class="highlight">环石永远优先留给限定池！常驻池有50抽自选活动，用免费的「追忆之环」即可。</div>
+<h2>资源规划建议</h2>
+<ul><li><strong>常驻池</strong>：只用免费送的「追忆之环」抽，不要用环石</li><li><strong>限定池</strong>：环石集中投入，优先拿1觉（大部分角色的质变点）</li><li><strong>弧盘池</strong>：一般不建议抽，优先用免费S级弧盘替代</li></ul>
+<h2>每月环石收入估算</h2>
+<ul><li>每日活跃：约300环石/月</li><li>月卡：约1800环石/月</li><li>深渊满星：约600环石/月</li><li>活动+维护补偿：约500-1000环石/月</li></ul>
+<p>合计零氪玩家每月约2400-2900环石，约可保底半个限定角色。</p>
+<h2>1.1版本提醒</h2>
+<p>安魂曲限定棋盘6月18日关闭，若未攒够保底不要强行氪金——后续还有伊洛伊等新角色值得期待。</p>`
+    }
+  },
+  "zh-TW": {
+    siteName: "異環攻略站", back: "← 返回首頁", langName: "繁體中文",
+    notFoundTitle: "文章未找到", notFoundDesc: "請從首頁選擇一篇文章閱讀",
+    catGuides: "攻略", catNews: "趣聞", catTips: "小知識",
+    pageTitle: "異環攻略站",
+    guides1: { title: "安魂曲抽取指南：強度分析、弧盤搭配與四套時裝獲取", category: "catGuides", body: `<p>安魂曲（Anima）是1.1版本「遊夢洄廊」限定棋盤「久夢初醒時」的S級暗屬性輸出角色，卡池開放時間為5月28日～6月18日。</p><h2>角色定位與強度</h2><p>安魂曲是目前版本最強的暗屬性主C，擁有獨立的抗性乘區。搭配早霧（1覺）和達芙蒂爾（0覺）的創生隊，12層上半可33秒通關。</p><div class="highlight">核心機制：噩夢效果複製——安魂曲可以將一個敵人的負面效果複製到周圍所有目標。</div><h2>抽取建議</h2><ul><li><strong>強度黨</strong>：至少抽到1覺，質變點在1覺和6覺</li><li><strong>休閒黨</strong>：0覺即可體驗核心玩法，弧盤優先級高於覺醒</li><li><strong>零氪黨</strong>：可藉助好友的安魂曲體驗，環石留給後續角色</li></ul><h2>弧盤搭配</h2><p>專屬弧盤「最後一朵玫瑰」需通過「夜曲特刊」研募活動獲取。備選弧盤：「休假日」（免費S級，+30%攻擊）。</p><h2>四套時裝</h2><ul><li><strong>新月搖籃曲</strong>：羈遇10級免費獲取</li><li><strong>鎏金交響詩</strong>：棋盤抽取獲取</li><li><strong>舊憶輓歌</strong>：商城購買（7月2日前折扣）</li><li><strong>黑白童謠</strong>：商城購買（7月2日前折扣）</li></ul>` },
+    guides2: { title: "深淵11站配隊實測：低命通關陣容推薦", category: "catGuides", body: `<p>深淵11站（軌外之境）是當前版本的高難副本。實測證明，沒有安魂曲也能滿星通關。</p><h2>推薦配隊一：潯主C隊</h2><p>核心：潯(1命) + 白藏 + 小吱。單輪爆發極高，適合高血量菁英關卡。</p><h2>推薦配隊二：娜娜莉速切隊</h2><p>核心：娜娜莉(0命可用) + 小吱 + 白藏。高頻換人、容錯率高，適合多目標關卡。</p><h2>推薦配隊三：白藏單通</h2><p>白藏(1命)操作上限極高，熟練後可以單通大部分高難關卡。</p><h2>通用技巧</h2><ul><li>優先擊殺召喚小怪的菁英敵人</li><li>善用場地機關，部分關卡有爆炸桶可用</li><li>11層BOSS的扇形AOE可通過貼身站位躲避</li></ul>` },
+    guides3: { title: "娜娜莉隱藏機制解析：E切人鎖buff、無前搖重擊手法", category: "catGuides", body: `<p>娜娜莉是當前版本操作上限最高的角色之一，掌握隱藏機制後輸出可提升30%以上。</p><h2>機制一：E技能切人不掉buff</h2><p>娜娜莉使用E技能後的瞬間切人，可以保留「權柄」buff在後台繼續觸發被動傷害。操作要點：E → 立即切人（窗口約0.3秒）。</p><h2>機制二：3A/4A合軸切人</h2><p>在第3段或第4段普攻時預輸入平A指令後立即切人，娜娜莉會留在場上自動打完整套連段。</p><h2>機制三：大招期間切人鎖buff</h2><p>大招動畫期間切人放Q，可以鎖定當前所有buff，讓大招覆蓋2套完整平A（比純站場多3段傷害）。</p><h2>機制四：無前搖重擊</h2><p>在普攻第1/2/3/5段後可以直接接無前搖重擊，跳過重擊蓄力動畫。</p>` },
+    guides4: { title: "免費S級弧盤全收集：14個白嫖弧盤獲取路線", category: "catGuides", body: `<p>遊戲中共有14個可免費獲取的S級弧盤，無需抽取即可獲得。</p><h2>必拿弧盤（Top 5）</h2><table><tr><th>弧盤</th><th>獲取方式</th><th>適配角色</th></tr><tr><td>休假日</td><td>隱藏任務「日蝕」×6次對話</td><td>主角（+30%攻擊）</td></tr><tr><td>銀河暫留</td><td>累計登入10天</td><td>海月</td></tr><tr><td>思考喵</td><td>都市大亨21級</td><td>小吱</td></tr><tr><td>焰魂狂飆</td><td>異象委託「鐵馭強襲」</td><td>哈索爾</td></tr><tr><td>好狗狗走四方</td><td>週本墨菲克斯掉落</td><td>早霧</td></tr></table>` },
+    guides5: { title: "1.1版本新角色伊洛伊前瞻：首位靈系奶輔", category: "catGuides", body: `<p>伊洛伊（Iloy）是官方最新官宣的S級靈系角色，定位為遠程奶輔，預計在後續版本實裝。</p><h2>角色定位</h2><p>首位靈系角色，遠程輔助型。可召喚異象寵物協同作戰，同時提供治療和增益buff。建模風格類似初音未來。</p><h2>技能解析</h2><ul><li><strong>普攻</strong>：遠程音符攻擊，命中為全隊回復微量生命</li><li><strong>E技能</strong>：召喚異象寵物「旋律」，在場時全隊增傷15%</li><li><strong>Q大招</strong>：大範圍治療 + 清除全隊debuff + 10秒內全隊增傷25%</li></ul>` },
+    news1: { title: "看板娘薄荷人設解析：永遠掛科的貓娘", category: "catNews", body: `<p>薄荷（Mint）是《異環》的看板娘，一隻藍貓娘。外表甜軟、戰力不俗、靈魂有趣——但她的管理局考試永遠掛科。</p><h2>外形設計</h2><p>微胖、肉嘟嘟的藍貓娘，貓耳內有白色絨毛，可愛感拉滿。尾巴會隨著情緒擺動。</p><h2>性格特點</h2><p>元氣滿滿、坐不住，每次出場都帶來笑料。她雖然理論考試一直掛科，但外勤能力其實超強。</p><h2>經典習慣</h2><p>薄荷用氣味稱呼人——叫主角「可可」，因為主角身上有可可的味道。</p>` },
+    news2: { title: "角色羈絆頭像惡搞大全：官方玩梗停不下來", category: "catNews", body: `<p>羈絆系統在等級8時會贈送一個「神奇」頭像，每個頭像的名字都是對自家角色的惡搞。</p><table><tr><th>角色</th><th>頭像名</th><th>梗解析</th></tr><tr><td>薄荷</td><td>厚荷</td><td>諧音，簡介「可以不用補考嗎？」</td></tr><tr><td>翳</td><td>—</td><td>惡搞名字本身難認</td></tr><tr><td>法帝婭</td><td>法高婭</td><td>諧音梗，對應雙重人格設定</td></tr><tr><td>阿德勒</td><td>啊啊啊</td><td>因為怎麼稱呼都行</td></tr><tr><td>娜娜莉</td><td>這這莉</td><td>「最有方向感一集」</td></tr><tr><td>早霧</td><td>晚霧</td><td>直接反義</td></tr><tr><td>白藏</td><td>黑藏</td><td>顏色反轉</td></tr><tr><td>小吱</td><td>百日</td><td>對應百日紅，寓意富貴吉祥</td></tr></table>` },
+    news3: { title: "支線故事：寵物溝通師詐騙事件", category: "catNews", body: `<p>這是玩家評價最高的支線任務之一，劇情品質被一致認為「比主線還精彩」。</p><h2>故事概要</h2><p>九度C咖啡店的美女店員格蕾絲因思念已故寵物「菲利」，被一位自稱能和寵物靈魂溝通的「異能者」盯上。騙子最終以「通靈儀式」為名，騙走了她珍藏的稀有限定模型。</p><h2>主角的介入</h2><p>主角通過調查發現「通靈盒子」只是一個普通的音樂盒改造品。最終在一場追逐戲中抓住了騙子。</p><h2>任務獎勵</h2><p>一個特殊家具「菲利的項圈」，可放在家中。</p>` },
+    news4: { title: "黑羽魔女的小祕密：用水晶球偷看動畫片", category: "catNews", body: `<p>黑羽魔女是遊戲中的人氣NPC。有玩家發現她正用占卜水晶球偷偷看動畫片——而且是哈尼婭愛看的特工題材。被靠近時會慌張地收起來、臉紅、整理頭髮和翅膀。</p><h2>如何觸發</h2><p>在夜晚時段（遊戲內時間20:00-6:00）前往黑羽的家（橋間地區域），不要敲門直接進入即可觸發。每週只能觸發一次。</p>` },
+    news5: { title: "遊戲彩蛋全盤點：你能認出幾個致敬？", category: "catNews", body: `<p>《異環》中埋藏了大量對經典作品的致敬。</p><h2>文學與影視</h2><ul><li><strong>「裴廓德」+ 白鯨</strong>：致敬《白鯨》（Moby Dick）</li><li><strong>手錶秒針通訊</strong>：致敬《星際穿越》</li><li><strong>「生存還是毀滅」</strong>：莎士比亞《哈姆雷特》</li><li><strong>斯卡布羅集市</strong>：英國傳統民歌</li></ul><h2>遊戲與動漫</h2><ul><li><strong>撬棍 + 博士</strong>：致敬《半條命》</li><li><strong>夜雀食堂 + 算術教室</strong>：東方同人遊戲 + 琪露諾梗</li><li><strong>潛水用品 +「碧藍之家」</strong>：致敬《碧藍之海》</li></ul>` },
+    tips1: { title: "零成本銷星技巧：聯機/試用關卡秒消通緝", category: "catTips", body: `<p>在《異環》中犯罪會積累通緝星級。以下是兩個零成本消除通緝星的技巧。</p><h2>方法一：召喚好友</h2><p>召喚好友進入你的世界，犯罪星級會直接清零。而且聯機狀態下無法犯罪。</p><h2>方法二：進入試用關卡</h2><p>進入任意角色的試用關卡，再退出，犯罪星級同樣清零。這個方法不需要好友在線，最為方便。</p><h2>方法三：躲進安全屋</h2><p>購買任意房產後，進入家中等待約30秒，通緝自動解除。</p>` },
+    tips2: { title: "每日必做清單：卜運·祈福·許願·隱藏互動", category: "catTips", body: `<p>每天只需10-15分鐘，做完以下事項可最大化日常收益：</p><ol><li><strong>魔女之家卜運</strong>：橋間地維特海默塔附近找「黑羽」</li><li><strong>願木坡祈福</strong>：新赫蘭德區找「芷蘭」買祈福牌</li><li><strong>納庫佩達之池許願</strong>：繪空町噴泉池投金幣</li><li><strong>隱藏互動×3</strong>：點擊發光物體或隱藏NPC</li><li><strong>異能聯動×1</strong>：觸發一次聯動技能</li><li><strong>探索指南活躍任務</strong>：獲得方斯、環石、經驗</li></ol>` },
+    tips3: { title: "安魂曲無限刷突破材料：遠離刷新法詳解", category: "catTips", body: `<p>安魂曲的突破材料需要擊敗特定的野生小怪獲取。以下是無限刷取的方法：</p><ol><li>前往材料怪物的刷新點位</li><li>擊敗怪物後立刻快速遠離現場</li><li>持續遠離直到螢幕出現「黑潮湧動」畫面</li><li>返回刷新點，怪物已經重新出現</li><li>重複以上步驟，無限刷取</li></ol><div class="highlight">注意：不要在怪物死亡動畫結束前遠離，否則可能不觸發刷新。</div>` },
+    tips4: { title: "快速賺錢指南：全市保險箱位置彙總", category: "catTips", body: `<p>方斯在中期開始緊缺。以下是全市高收益保險箱位置：</p><table><tr><th>地點</th><th>收益</th></tr><tr><td>米格爾區索雷伊路工地電梯2樓</td><td>5萬+方斯</td></tr><tr><td>米格爾區索雷伊路工地電梯3樓</td><td>5萬+方斯</td></tr><tr><td>火車站倉庫</td><td>3萬+方斯</td></tr><tr><td>繪空町巷子</td><td>2.5萬方斯</td></tr><tr><td>邁達斯弧盤工房二樓</td><td>2萬方斯</td></tr></table>` },
+    tips5: { title: "抽卡資源規劃：環石別抽常駐池！", category: "catTips", body: `<p>環石（Orbit）是最珍貴的抽卡資源，錯誤的用法會讓你損失慘重。</p><div class="highlight">環石永遠優先留給限定池！常駐池有50抽自選活動，用免費的「追憶之環」即可。</div><h2>資源規劃建議</h2><ul><li><strong>常駐池</strong>：只用免費送的「追憶之環」抽</li><li><strong>限定池</strong>：環石集中投入，優先拿1覺</li><li><strong>弧盤池</strong>：一般不建議抽，優先用免費S級弧盤替代</li></ul><h2>每月環石收入估算</h2><p>零氪玩家每月約2400-2900環石，約可保底半個限定角色。</p>` }
+  },
+  en: {
+    siteName: "NTE Player Guide", back: "← Back to Home", langName: "English",
+    notFoundTitle: "Article Not Found", notFoundDesc: "Please select an article from the home page",
+    catGuides: "Guides", catNews: "Stories", catTips: "Tips",
+    pageTitle: "NTE Player Guide",
+    guides1: { title: "Anima Pull Guide: Analysis, Arc Disc Builds & 4 Outfits", category: "catGuides", body: `<p>Anima is the S-rank Dark DPS featured in the v1.1 limited banner, running May 28 – June 18.</p><h2>Role & Strength</h2><p>Anima is the strongest Dark-element carry in the current meta with an independent resistance multiplier. With Hayagiri (A1) and Daphne (A0), the team can clear Abyss 12 upper half in 33 seconds.</p><div class="highlight">Core mechanic: Nightmare Clone — copies debuffs from one enemy to all nearby targets.</div><h2>Pull Recommendations</h2><ul><li><strong>Meta players</strong>: aim for A1 minimum</li><li><strong>Casual</strong>: A0 is fine for core gameplay</li><li><strong>F2P</strong>: borrow from friends, save Orbits for future</li></ul><h2>Arc Discs</h2><p>Signature disc "The Last Rose" from Nocturne event. Alternative: "Day Off" (free S-rank, +30% ATK).</p><h2>Four Outfits</h2><ul><li><strong>New Moon Lullaby</strong>: free at Bond Lv.10</li><li><strong>Gilded Symphony</strong>: gacha pull</li><li><strong>Elegy of Memories</strong>: shop (discount until July 2)</li><li><strong>Monochrome Rhyme</strong>: shop (discount until July 2)</li></ul>` },
+    guides2: { title: "Abyss Floor 11 Budget Teams: Low-Dupe Clear Comps", category: "catGuides", body: `<p>Abyss Floor 11 can be full-starred without Anima. Here are tested budget team options.</p><h2>Team 1: Xun Hypercarry</h2><p>Core: Xun (C1) + Shirakura + Kozue. High single-rotation burst for elite enemies.</p><h2>Team 2: Nanally Quick-Swap</h2><p>Core: Nanally (C0) + Kozue + Shirakura. High swap frequency, forgiving execution.</p><h2>Team 3: Shirakura Solo</h2><p>Shirakura (C1) can solo most high-difficulty content with skilled play. Use dodge to cancel recovery frames.</p>` },
+    guides3: { title: "Nanally Hidden Mechanics: E-Swap Buff Lock & Tech", category: "catGuides", body: `<p>Nanally has the highest skill ceiling in the current roster. Mastering her hidden mechanics can boost DPS by 30%+.</p><h2>Mechanic 1: E-Swap Buff Retention</h2><p>Swap characters immediately after pressing E (within ~0.3s window) to retain the Authority buff on Nanally while she's off-field.</p><h2>Mechanic 2: 3A/4A Combo Swap</h2><p>During the 3rd or 4th normal attack, pre-input attack then swap — Nanally stays on-field to finish the combo.</p><h2>Mechanic 3: Ultimate Buff Lock</h2><p>Swap during ultimate animation to lock all active buffs, extending the ultimate to cover 2 full attack strings.</p><h2>Mechanic 4: No-Windup Heavy Attack</h2><p>After normal attack 1/2/3/5, chain directly into a heavy attack with no charge animation.</p>` },
+    guides4: { title: "All 14 Free S-Rank Arc Discs: Complete Collection Guide", category: "catGuides", body: `<p>Fourteen S-Rank Arc Discs can be obtained for free.</p><table><tr><th>Disc</th><th>Source</th><th>Best For</th></tr><tr><td>Day Off</td><td>Hidden quest "Eclipse" ×6</td><td>MC (+30% ATK)</td></tr><tr><td>Galaxy Layover</td><td>Login 10 days</td><td>Mizuki</td></tr><tr><td>Thinking Cat</td><td>City Tycoon Lv.21</td><td>Kozue</td></tr><tr><td>Flame Soul Rampage</td><td>Anomaly: Iron Rider</td><td>Hathor</td></tr><tr><td>Good Dog Roams</td><td>Weekly Boss Murphyx</td><td>Hayagiri</td></tr></table>` },
+    guides5: { title: "New Character Iloy Preview: First Spirit-Type Healer/Support", category: "catGuides", body: `<p>Iloy is the newly announced S-rank Spirit character, a ranged healer/support expected in a future patch.</p><h2>Role</h2><p>First Spirit-type character. Summons a familiar for coordinated attacks while healing and buffing the team.</p><h2>Skills</h2><ul><li><strong>Normal</strong>: Ranged note attack, heals team on hit</li><li><strong>Skill</strong>: Summons familiar "Melody", 15% team DMG buff while active</li><li><strong>Ultimate</strong>: AoE heal + cleanse + 25% team DMG buff for 10s</li></ul>` },
+    news1: { title: "Mint the Catgirl: Never Passes Her Exams", category: "catNews", body: `<p>Mint is NTE's mascot — a blue catgirl who's sweet, combat-capable, and hilarious, but perpetually fails her Bureau exams.</p><h2>Design</h2><p>Soft, slightly chubby blue catgirl with fluffy white ear tufts. Her tail swings with her emotions.</p><h2>Personality</h2><p>Energetic and always causing laughter. Despite failing theory exams, she's a top-tier field agent.</p><h2>Quirk</h2><p>Mint identifies people by scent — she calls the MC "Cocoa" because of their cocoa-like scent.</p>` },
+    news2: { title: "Bond Avatar Parodies: Every Character's Meme Name", category: "catNews", body: `<p>At Bond Lv.8, each character gets a "mysterious" avatar with a parodied name.</p><table><tr><th>Char</th><th>Avatar</th><th>Joke</th></tr><tr><td>Mint</td><td>Thick Mint</td><td>"Can I skip the make-up exam?"</td></tr><tr><td>Fatiya</td><td>Fati-YES</td><td>Dual-personality pun</td></tr><tr><td>Adler</td><td>Ah-ah-ah</td><td>No one knows what to call him</td></tr><tr><td>Nanally</td><td>Nanotly</td><td>"Best sense of direction ever"</td></tr><tr><td>Hayagiri</td><td>Yoru-giri</td><td>Morning → Night</td></tr></table>` },
+    news3: { title: "Side Story: The Pet Psychic Scam", category: "catNews", body: `<p>Consistently rated the best side quest in NTE — a noir mystery in a coffee shop.</p><h2>Story</h2><p>Grace, a barista at 9°C Coffee, lost her beloved pet "Philly". A fake psychic exploited her grief, scamming her out of a rare limited edition figurine under the guise of a "spirit communication ritual".</p><h2>Resolution</h2><p>The MC investigates and discovers the "spirit box" is just a rigged music box. A chase sequence leads to catching the scammer. Reward: a special furniture item "Philly's Collar".</p>` },
+    news4: { title: "Blackfeather Witch's Secret: Anime on the Crystal Ball", category: "catNews", body: `<p>The Blackfeather Witch moonlights as a fortune teller near Witteheimer Tower — but her crystal ball doubles as an anime streaming device.</p><h2>Discovery</h2><p>Enter her home at night (in-game 20:00-6:00) without knocking. You'll catch her watching a spy anime. She panics, blushes, hides the crystal ball, and frantically tidies her hair and wings.</p>` },
+    news5: { title: "All Easter Eggs: Moby Dick, Half-Life, Interstellar & More", category: "catNews", body: `<p>NTE is packed with pop-culture references.</p><h2>Literature & Film</h2><ul><li><strong>"Pequod" + white whale</strong>: Moby Dick</li><li><strong>Watch morse-code</strong>: Interstellar</li><li><strong>"To be or not to be"</strong>: Hamlet</li><li><strong>Scarborough Fair</strong>: English folk song</li></ul><h2>Games & Anime</h2><ul><li><strong>Crowbar + doctor</strong>: Half-Life</li><li><strong>Diving gear + "Azure Home" bar</strong>: Grand Blue</li></ul>` },
+    tips1: { title: "Zero-Cost Wanted-Star Clear: Co-op & Trial Tricks", category: "catTips", body: `<p>Two methods to instantly clear your wanted level at zero cost.</p><h2>Method 1: Invite a Friend</h2><p>Summoning a friend into your world instantly clears all wanted stars. Plus, wanted levels can't increase in co-op.</p><h2>Method 2: Character Trial</h2><p>Enter any character trial stage and exit immediately. The entire process takes under 5 seconds.</p><h2>Method 3: Safe House</h2><p>Enter your home and wait ~30 seconds for the wanted status to expire naturally.</p>` },
+    tips2: { title: "Daily To-Do List: Fortune, Blessing, Wishes & More", category: "catTips", body: `<p>Just 10-15 minutes to maximize daily rewards:</p><ol><li><strong>Fortune at Witch's Home</strong> — Witteheimer Tower area</li><li><strong>Blessing at Prayer Slope</strong> — buy prayer tags from Zhilan</li><li><strong>Wish at Fountain</strong> — throw coins in Nakuperda Pool</li><li><strong>Hidden Interaction ×3</strong> — glowing objects/NPCs</li><li><strong>Anomaly Combo ×1</strong> — trigger one linked skill</li><li><strong>Exploration Guide dailies</strong> — Orbits, XP, currency</li></ol>` },
+    tips3: { title: "Anima Infinite Farm: Respawn Trick Explained", category: "catTips", body: `<p>Farm Anima's ascension materials infinitely with this respawn method:</p><ol><li>Go to the monster's spawn location</li><li>Defeat the monster, then immediately sprint away</li><li>Keep moving until "Dark Tide Surge" appears on screen</li><li>Return to the spawn point — the monster has respawned</li><li>Repeat</li></ol><div class="highlight">This uses the game's legitimate Dark Tide respawn mechanic, not a bug. Safe to use.</div>` },
+    tips4: { title: "Fast Money Guide: All Safe Locations & Earnings", category: "catTips", body: `<table><tr><th>Location</th><th>Earnings</th></tr><tr><td>Miguel District elevator 2F</td><td>50,000+</td></tr><tr><td>Miguel District elevator 3F</td><td>50,000+</td></tr><tr><td>Train Station Warehouse</td><td>30,000+</td></tr><tr><td>Skyscape Town Alley</td><td>25,000</td></tr><tr><td>Midas Disc Workshop 2F</td><td>20,000</td></tr></table>` },
+    tips5: { title: "Don't Spend Orbits on Standard! Gacha Planning 101", category: "catTips", body: `<div class="highlight">Always save Orbits for limited banners! Standard banner has a 50-pull selector — use free Remembrance Orbs only.</div><h2>Monthly Orb Income (F2P)</h2><ul><li>Dailies: ~300</li><li>Abyss full clear: ~600</li><li>Events + maintenance: ~500-1000</li></ul><p>Total: ~2400-2900 Orbits/month for F2P players.</p>` }
+  },
+  ja: {
+    siteName: "NTE攻略ステーション", back: "← ホームに戻る", langName: "日本語",
+    notFoundTitle: "記事が見つかりません", notFoundDesc: "ホームから記事を選んでください",
+    catGuides: "攻略", catNews: "読み物", catTips: "豆知識",
+    pageTitle: "NTE攻略ステーション",
+    guides1: { title: "アニマガチャ完全ガイド", category: "catGuides", body: `<p>アニマ（安魂曲）はv1.1限定ガチャのS級闇属性アタッカー（5/28～6/18）。</p><h2>強さ評価</h2><p>現環境最強の闇属性メインアタッカー。独立耐性乗算を持つ。</p><h2>おすすめ凸数</h2><ul><li><strong>廃課金</strong>：1凸以上（質変点は1凸と6凸）</li><li><strong>微課金</strong>：0凸で十分楽しめる</li></ul><h2>おすすめ弧盤</h2><p>専用弧盤「最後の薔薇」は夜曲イベントで入手。代替：無料S級「休日」（+30%攻撃）。</p><h2>衣装4種</h2><ul><li>新月の子守唄：絆Lv.10で無料</li><li>黄金交響詩：ガチャ</li><li>旧憶の哀歌：ショップ（7/2まで割引）</li><li>白黒童謡：ショップ（7/2まで割引）</li></ul>` },
+    guides2: { title: "深淵11層 低凸クリア編成", category: "catGuides", body: `<p>深淵11層はアニマなしでも満星クリア可能。</p><h2>おすすめ編成</h2><ul><li><strong>浔ハイパーキャリー</strong>：浔(1凸)+白藏+小吱</li><li><strong>ナナリー速切</strong>：ナナリー(0凸)+小吱+白藏</li><li><strong>白藏ソロ</strong>：白藏(1凸)で高難度をソロ攻略可能</li></ul>` },
+    guides3: { title: "ナナリー隠しメカニズム", category: "catGuides", body: `<p>ナナリーは現バージョンで最も操作難度が高いキャラ。</p><h2>メカニズム4種</h2><ul><li><strong>E切替バフ維持</strong>：E使用後即座に交代でバフ維持</li><li><strong>3A/4A同時交代</strong>：3～4段目で先行入力→交代で同時攻撃</li><li><strong>必殺技バフ固定</strong>：必殺技中に交代でバフを固定化</li><li><strong>無溜め重撃</strong>：通常攻撃1/2/3/5段後、溜めなし重撃可</li></ul>` },
+    guides4: { title: "無料S級弧盤14種 入手ルート", category: "catGuides", body: `<p>14種のS級弧盤が無料で入手可能。</p><table><tr><th>弧盤</th><th>入手方法</th></tr><tr><td>休日</td><td>隠しクエスト「日蝕」×6</td></tr><tr><td>銀河滞在</td><td>累計ログイン10日</td></tr><tr><td>考える猫</td><td>都市タイクーンLv.21</td></tr><tr><td>炎魂狂走</td><td>異象依頼「鉄騎強襲」</td></tr><tr><td>良い犬よ</td><td>週ボス マーフィックス</td></tr></table>` },
+    guides5: { title: "新キャラ「イロイ」先行解析", category: "catGuides", body: `<p>イロイは新発表のS級霊属性キャラ。遠距離ヒーラー兼サポーター。</p><h2>スキル</h2><ul><li><strong>通常</strong>：遠距離音符攻撃、ヒット時微量回復</li><li><strong>スキル</strong>：使い魔「旋律」召喚、全体与ダメ+15%</li><li><strong>必殺技</strong>：広範囲回復+デバフ解除+全体与ダメ+25%（10秒）</li></ul>` },
+    news1: { title: "看板娘ミント徹底解説", category: "catNews", body: `<p>ミントはNTEの看板娘。可愛くて強くて面白い——でも試験は万年赤点。</p><h2>デザイン</h2><p>ふっくらした青い猫娘。耳の内側は白いふわふわ。</p><h2>性格</h2><p>元気いっぱいでいつも笑いを届ける。学科試験は苦手だが実戦能力はトップクラス。</p><h2>癖</h2><p>匂いで人を呼ぶ——主人公のことは「ココア」と呼ぶ。</p>` },
+    news2: { title: "絆アイコン悪ふざけ大全", category: "catNews", body: `<table><tr><th>キャラ</th><th>アイコン名</th></tr><tr><td>ミント</td><td>厚荷（あつに）</td></tr><tr><td>ファティア</td><td>ファ高ヤ</td></tr><tr><td>アドラー</td><td>あああ</td></tr><tr><td>ナナリー</td><td>ここれり</td></tr><tr><td>ハヤギリ</td><td>夜霧</td></tr><tr><td>シラクラ</td><td>黒蔵</td></tr></table><p>公式が遊び心満載で展開するネタ。</p>` },
+    news3: { title: "ペット霊媒師詐欺事件", category: "catNews", body: `<p>ユーザー評価最高のサイドクエスト。喫茶店「9°Cコーヒー」の店員グレースがペットロスにつけ込まれ、偽の霊能力者に貴重な限定フィギュアを騙し取られる。主人公が調査し、トリックを暴く。</p>` },
+    news4: { title: "黒羽の魔女の秘密", category: "catNews", body: `<p>黒羽の魔女は普段は占い師をしているが、実は水晶玉でスパイアニメを見ている。夜間に自宅へ侵入すると、慌てて隠して顔を赤らめる姿が見られる。</p>` },
+    news5: { title: "元ネタ・イースターエッグ総まとめ", category: "catNews", body: `<ul><li>「ピークォド号」+白鯨 → 『白鯨』</li><li>バール+博士 → 『Half-Life』</li><li>腕時計のモールス信号 → 『インターステラー』</li><li>「生きるべきか死ぬべきか」 → 『ハムレット』</li><li>潜水用具+「碧藍の家」 → 『ぐらんぶる』</li></ul>` },
+    tips1: { title: "手配度ゼロコスト解除", category: "catTips", body: `<ul><li><strong>フレンド召喚</strong>：協力プレイで手配度即時リセット</li><li><strong>キャラ試用</strong>：試用ステージに入って即退出（最速5秒）</li><li><strong>セーフハウス</strong>：自宅で30秒待機</li></ul>` },
+    tips2: { title: "デイリーチェックリスト", category: "catTips", body: `<ol><li>魔女の家で占い（黒羽）</li><li>願木坂で祈り（芷蘭）</li><li>噴水で願い事（ナクペダ池）</li><li>隠し会話×3</li><li>異能連携×1</li><li>探索ガイドデイリー</li></ol>` },
+    tips3: { title: "アニマ無限周回の方法", category: "catTips", body: `<p>素材モンスターを倒した後、すぐに遠くへ離脱。「黒潮湧動」が表示されたら戻ると再出現している。ゲームの正規の湧き直しメカニズムを利用した安全な方法。</p>` },
+    tips4: { title: "時短金策ガイド", category: "catTips", body: `<table><tr><th>場所</th><th>収入</th></tr><tr><td>ミゲル区工事現場2F</td><td>5万+</td></tr><tr><td>ミゲル区工事現場3F</td><td>5万+</td></tr><tr><td>駅倉庫</td><td>3万+</td></tr><tr><td>絵空町路地</td><td>2.5万</td></tr></table>` },
+    tips5: { title: "環石は恒常ガチャに使うな！", category: "catTips", body: `<div class="highlight">環石は限定ガチャに温存！恒常は無料の「追憶の環」だけで回す。</div><h2>月間収入（無課金）</h2><ul><li>デイリー：約300</li><li>深淵満星：約600</li><li>イベント+補填：約500～1000</li></ul><p>月間約2400～2900環石。</p>` }
+  },
+  ko: {
+    siteName: "NTE 공략 스테이션", back: "← 홈으로", langName: "한국어",
+    notFoundTitle: "게시글을 찾을 수 없습니다", notFoundDesc: "홈에서 게시글을 선택해 주세요",
+    catGuides: "공략", catNews: "이야기", catTips: "팁",
+    pageTitle: "NTE 공략 스테이션",
+    guides1: { title: "애니마 가챠 완벽 가이드", category: "catGuides", body: `<p>애니마(安魂曲)는 v1.1 한정 픽업 S급 암속성 딜러 (5/28~6/18).</p><h2>강점</h2><p>현 메타 최강 암속성 메인딜러. 독립 내성 계수 보유.</p><h2>돌파 추천</h2><ul><li><strong>헤비과금</strong>: 1돌 이상</li><li><strong>소과금</strong>: 0돌로도 충분</li></ul><h2>아크디스크</h2><p>전용 디스크 「마지막 장미」는 야상곡 이벤트. 대체: 무료 S급 「휴일」(+30% 공격).</p><h2>스킨 4종</h2><ul><li>신월의 자장가: 호감도 10레벨 무료</li><li>황금 교향시: 가챠</li><li>추억의 애가: 상점 (7/2 할인)</li><li>흑백 동요: 상점 (7/2 할인)</li></ul>` },
+    guides2: { title: "심연 11층 저투자 클리어 조합", category: "catGuides", body: `<p>애니마 없이도 심연 11층 만별 클리어 가능.</p><h2>추천 조합</h2><ul><li><strong>쉰 하이퍼캐리</strong>: 쉰(1돌)+시라쿠라+코즈에</li><li><strong>나날리 스왑</strong>: 나날리(0돌)+코즈에+시라쿠라</li><li><strong>시라쿠라 솔로</strong>: 시라쿠라(1돌) 고난도 솔로 가능</li></ul>` },
+    guides3: { title: "나날리 숨겨진 메커니즘", category: "catGuides", body: `<p>현 버전 조작 난이도 최상 캐릭터.</p><h2>4가지 메커니즘</h2><ul><li><strong>E스왑 버프 유지</strong>: E 사용 직후 교체로 버프 유지</li><li><strong>3A/4A 동시 교체</strong>: 3~4타 선입력 후 교체</li><li><strong>궁극기 버프 고정</strong>: 궁극기 중 교체로 버프 고정</li><li><strong>무차지 강공격</strong>: 평타 1/2/3/5타 후 차지 없이 강공</li></ul>` },
+    guides4: { title: "무료 S급 아크디스크 14종 입수 루트", category: "catGuides", body: `<table><tr><th>디스크</th><th>입수 방법</th></tr><tr><td>휴일</td><td>숨겨진 퀘스트 「일식」×6</td></tr><tr><td>은하 체류</td><td>누적 로그인 10일</td></tr><tr><td>생각하는 고양이</td><td>도시 타이쿤 Lv.21</td></tr><tr><td>염혼광표</td><td>이상 의뢰 「철기강습」</td></tr><tr><td>착한 개</td><td>주간 보스 머피크스</td></tr></table>` },
+    guides5: { title: "신규 캐릭터 일로이 프리뷰", category: "catGuides", body: `<p>일로이는 신규 발표된 S급 영속성 힐러/서포터.</p><h2>스킬</h2><ul><li><strong>평타</strong>: 원거리 음표 공격, 적중 시 소량 회복</li><li><strong>스킬</strong>: 사역마 「멜로디」 소환, 파티 대미지 +15%</li><li><strong>궁극기</strong>: 광역 회복+디버프 해제+파티 대미지 +25% (10초)</li></ul>` },
+    news1: { title: "마스코트 민트 분석", category: "catNews", body: `<p>민트는 NTE의 마스코트. 귀엽고 강하고 웃기지만 시험은 항상 낙제.</p><h2>디자인</h2><p>통통한 파란 고양이 소녀. 귀 안쪽은 하얀 털.</p><h2>습관</h2><p>냄새로 사람을 구별——주인공은 「코코아」라고 부른다.</p>` },
+    news2: { title: "호감도 아바타 패러디", category: "catNews", body: `<table><tr><th>캐릭터</th><th>아바타명</th></tr><tr><td>민트</td><td>두꺼운 민트</td></tr><tr><td>파티야</td><td>파高야</td></tr><tr><td>아들러</td><td>아아아</td></tr><tr><td>나날리</td><td>이이리</td></tr><tr><td>하야기리</td><td>밤안개</td></tr><tr><td>시라쿠라</td><td>검은장</td></tr></table>` },
+    news3: { title: "반려동물 심령술사 사기 사건", category: "catNews", body: `<p>유저 평가 최고의 사이드 퀘스트. 커피숍 점원 그레이스가 죽은 반려동물에 대한 그리움을 이용당해 희귀 피규어를 사기당한다. 주인공이 수사하여 범인을 잡는 이야기.</p>` },
+    news4: { title: "흑우 마녀의 비밀", category: "catNews", body: `<p>흑우 마녀는 평소 점술사로 활동하지만, 사실 수정구슬로 스파이 애니메이션을 본다. 밤에 집에 몰래 들어가면 당황해서 숨기고 얼굴이 빨개지는 모습을 볼 수 있다.</p>` },
+    news5: { title: "이스터에그 총정리", category: "catNews", body: `<ul><li>「피쿼드호」+흰고래 → 『모비딕』</li><li>빠루+박사 → 『하프라이프』</li><li>시계 모스 부호 → 『인터스텔라』</li><li>「사느냐 죽느냐」 → 『햄릿』</li><li>잠수용품+「벽람의 집」 → 『그랑블루』</li></ul>` },
+    tips1: { title: "현상수배 별 등급 무료 초기화", category: "catTips", body: `<ul><li><strong>친구 소환</strong>: 협동 플레이 시 즉시 초기화</li><li><strong>캐릭터 시험판</strong>: 시험 스테이지 입장 후 즉시 퇴장 (5초)</li><li><strong>안전가옥</strong>: 집에서 30초 대기</li></ul>` },
+    tips2: { title: "데일리 체크리스트", category: "catTips", body: `<ol><li>마녀의 집에서 점술</li><li>기도비탈에서 기도</li><li>분수에서 소원</li><li>숨은 대화×3</li><li>이능 연계×1</li><li>탐색 가이드 데일리</li></ol>` },
+    tips3: { title: "애니마 무한 파밍 방법", category: "catTips", body: `<p>소재 몬스터 처치 후 즉시 멀리 이탈. 「흑조용동」 표시 후 돌아오면 리스폰. 게임의 정규 리스폰 시스템을 이용한 안전한 방법.</p>` },
+    tips4: { title: "빠른 골드 파밍 가이드", category: "catTips", body: `<table><tr><th>장소</th><th>수입</th></tr><tr><td>미겔구 공사현장 2F</td><td>5만+</td></tr><tr><td>미겔구 공사현장 3F</td><td>5만+</td></tr><tr><td>역 창고</td><td>3만+</td></tr><tr><td>스카이프 타운 골목</td><td>2.5만</td></tr></table>` },
+    tips5: { title: "오브는 상시 가챠에 쓰지 마세요!", category: "catTips", body: `<div class="highlight">오브는 한정 가챠에만 사용! 상시 가챠는 무료 「추억의 고리」로 충분.</div><h2>월간 수입 (무과금)</h2><ul><li>데일리: 약 300</li><li>심연 만별: 약 600</li><li>이벤트+보상: 약 500~1000</li></ul><p>월 약 2400~2900 오브.</p>` }
+  }
+};
+
+// ===== Language Switcher =====
+let currentLang = 'zh-CN';
+
+function switchLang(lang) {
+  currentLang = lang;
+  document.documentElement.lang = {'zh-CN':'zh-CN','zh-TW':'zh-TW',en:'en',ja:'ja',ko:'ko'}[lang] || lang;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (i18n[currentLang] && i18n[currentLang][key]) {
+      el.textContent = i18n[currentLang][key];
+    }
+  });
+  document.getElementById('currentLang').textContent = i18n[currentLang].langName;
+  document.querySelectorAll('.lang-option').forEach(opt => {
+    opt.classList.toggle('active', opt.dataset.lang === lang);
+  });
+  document.getElementById('langSwitcher').classList.remove('open');
+  try { localStorage.setItem('nte-lang', lang); } catch(e) {}
+  // Re-render article with new language
+  renderArticle();
+}
+
+document.getElementById('langBtn').addEventListener('click', (e) => {
+  e.stopPropagation();
+  document.getElementById('langSwitcher').classList.toggle('open');
+});
+document.querySelectorAll('.lang-option').forEach(opt => {
+  opt.addEventListener('click', (e) => {
+    e.stopPropagation();
+    switchLang(opt.dataset.lang);
+  });
+});
+document.addEventListener('click', () => {
+  document.getElementById('langSwitcher').classList.remove('open');
+});
+
+// ===== Article Rendering =====
+function renderArticle() {
+  const container = document.getElementById('articleContent');
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id');
+  const t = i18n[currentLang];
+
+  // Update page title
+  if (id && t[id] && t[id].title) {
+    document.title = t[id].title + ' - ' + t.siteName;
+  } else {
+    document.title = t.siteName;
+  }
+
+  if (!id || !t[id] || !t[id].title) {
+    container.innerHTML = `<div class="not-found"><h2>${t.notFoundTitle}</h2><p>${t.notFoundDesc}</p></div>`;
+    return;
+  }
+
+  const article = t[id];
+  const catClass = article.category === 'catGuides' ? 'cat-guides' : article.category === 'catNews' ? 'cat-news' : 'cat-tips';
+  const catLabel = t[article.category] || '';
+
+  container.innerHTML = `
+    <div class="article-meta">${t.siteName} · ${new Date().toISOString().slice(0,10)}</div>
+    <span class="article-category ${catClass}">${catLabel}</span>
+    <h1 class="article-title">${article.title}</h1>
+    <div class="article-body">${article.body}</div>
+  `;
+}
+
+// ===== Init =====
+(function() {
+  let saved;
+  try { saved = localStorage.getItem('nte-lang'); } catch(e) {}
+  if (saved && i18n[saved]) { currentLang = saved; }
+  switchLang(currentLang);
+})();
+</script>
+</body>
+</html>
